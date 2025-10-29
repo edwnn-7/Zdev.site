@@ -1,126 +1,162 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cyber Terminal Glitz</title>
+  <title>// Edwnn — Reflection Terminal</title>
   <style>
+    /* ====== BASE ====== */
     html, body {
       margin: 0;
       padding: 0;
-      background: black;
-      font-family: monospace;
-      color: #00ff00;
-      overflow: hidden;
       height: 100%;
+      background: radial-gradient(circle at center, #000 60%, #011 100%);
+      font-family: 'Courier New', monospace;
+      color: #00ff99;
+      overflow: hidden;
+      user-select: none;
     }
 
-    .glitch-overlay {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
+    /* ====== AMBIENT GLOW ====== */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(0,255,120,0.06), transparent 80%);
+      animation: flicker 0.2s infinite;
+      z-index: 0;
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.97; }
+    }
+
+    /* ====== SCANLINES ====== */
+    .scanline {
+      position: fixed;
+      inset: 0;
       background: repeating-linear-gradient(
         180deg,
-        rgba(0, 255, 0, 0.03),
-        rgba(0, 255, 0, 0.03) 2px,
+        rgba(0, 255, 100, 0.03),
+        rgba(0, 255, 100, 0.03) 2px,
         transparent 2px,
         transparent 4px
       );
+      animation: scanmove 3s linear infinite;
+      pointer-events: none;
       z-index: 1;
-      animation: glitchLines 2s linear infinite;
+    }
+    @keyframes scanmove {
+      from { background-position: 0 0; }
+      to { background-position: 0 100px; }
     }
 
-    @keyframes glitchLines {
-      0% { background-position: 0 0; }
-      100% { background-position: 0 100px; }
-    }
-
+    /* ====== TERMINAL TEXT ====== */
     .terminal {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      color: #00ff99;
+      font-size: 13px;
+      letter-spacing: 1px;
       white-space: pre-wrap;
-      font-size: 12px;
-      z-index: 2;
-      color: #00ff00;
-      line-height: 2.2em;
       text-align: center;
+      z-index: 2;
+      line-height: 2em;
+      animation: fadeIn 2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -48%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
     }
 
+    /* ====== CHARACTER TYPING ====== */
     .char {
       opacity: 0;
       display: inline-block;
-      animation: fadeIn 0.05s forwards;
+      animation: fadeInChar 0.04s forwards;
     }
+    @keyframes fadeInChar { to { opacity: 1; } }
 
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-
+    /* ====== CURSOR ====== */
     .cursor {
       display: inline-block;
       width: 8px;
       height: 1em;
-      background-color: #00ff00;
+      background-color: #00ff99;
       animation: blink 1s steps(2, start) infinite;
-      margin-left: 3px;
+      margin-left: 4px;
     }
+    @keyframes blink { 50% { opacity: 0; } }
 
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
-
+    /* ====== SIGNATURE (WIPE ANIMATION) ====== */
     .username {
       position: absolute;
-      bottom: 20px;
-      right: 30px;
-      font-size: 15px;
-      color: #00ff00;
+      bottom: 25px;
+      right: 40px;
+      font-size: 18px;
+      color: #00ffaa;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(0,255,180,0.4);
       animation: wipe 6s ease-in-out infinite alternate;
-      text-shadow: 0 0 5px #00ff00;
+    }
+    @keyframes wipe {
+      0%   { clip-path: inset(0 100% 0 0); opacity: 0.3; }
+      50%  { clip-path: inset(0 0 0 0); opacity: 1; }
+      100% { clip-path: inset(0 0 0 100%); opacity: 0.3; }
     }
 
-    @keyframes wipe {
-      0%   { clip-path: inset(0 100% 0 0); }
-      50%  { clip-path: inset(0 0 0 0); }
-      100% { clip-path: inset(0 0 0 100%); }
+    /* ====== BACKGROUND GRID ====== */
+    .grid {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(0,255,100,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,255,100,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.2;
+      z-index: 0;
+      animation: gridPulse 6s ease-in-out infinite alternate;
+    }
+    @keyframes gridPulse {
+      from { opacity: 0.15; }
+      to { opacity: 0.25; }
     }
   </style>
 </head>
 <body>
-  <!-- Glitch background -->
-  <div class="glitch-overlay"></div>
+  <div class="scanline"></div>
+  <div class="grid"></div>
 
-  <!-- Terminal Teks Motivasi -->
-  <div class="terminal" id="textTarget"></div>
+  <!-- Terminal Quote -->
+  <div class="terminal" id="terminal"></div>
 
-  <!-- Username -->
-  <div class="username">77/edwnn_</div>
+  <!-- Signature -->
+  <div class="username">Edwnn</div>
 
   <script>
-    const text = `evaluasi diri \n\nJadikan kesalahan sebagai pelajaran`;
-    const container = document.getElementById("textTarget");
-
+    const text = `Hate is just silent admiration.`;
+    const target = document.getElementById("terminal");
     let delay = 0;
+
     for (let char of text) {
       if (char === '\\n') {
-        container.appendChild(document.createElement("br"));
+        target.appendChild(document.createElement("br"));
         continue;
       }
       const span = document.createElement("span");
       span.textContent = char;
       span.className = "char";
-      span.style.animationDelay = `${delay}s`;
-      container.appendChild(span);
+      span.style.animationDelay = delay + "s";
+      target.appendChild(span);
       delay += 0.03;
     }
 
-    // Cursor blinking
+    // Blinking cursor
     const cursor = document.createElement("span");
     cursor.className = "cursor";
-    container.appendChild(cursor);
+    target.appendChild(cursor);
   </script>
 </body>
 </html>
