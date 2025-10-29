@@ -75,7 +75,7 @@
     .char {
       opacity: 0;
       display: inline-block;
-      animation: fadeInChar 0.04s forwards;
+      animation: fadeInChar 0.06s forwards;
     }
     @keyframes fadeInChar { to { opacity: 1; } }
 
@@ -100,7 +100,7 @@
       font-weight: 600;
       letter-spacing: 1px;
       text-shadow: 0 0 8px rgba(0,255,180,0.4);
-      animation: wipe 6s ease-in-out infinite alternate;
+      animation: wipe 8s ease-in-out infinite alternate;
     }
     @keyframes wipe {
       0%   { clip-path: inset(0 100% 0 0); opacity: 0.3; }
@@ -150,7 +150,7 @@
       span.className = "char";
       span.style.animationDelay = delay + "s";
       target.appendChild(span);
-      delay += 0.03;
+      delay += 0.08;
     }
 
     // Blinking cursor
